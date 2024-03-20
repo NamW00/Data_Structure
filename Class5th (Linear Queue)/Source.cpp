@@ -9,7 +9,7 @@ using namespace std;
 // 원래 데이터가 있던 배열의 자리에 더 이상 다른값이
 // 들어올 수 없는 Queue입니다.
 
-template <typename T>
+template <typename T> 
 class LinearQueue
 {
 private:
