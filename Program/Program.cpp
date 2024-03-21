@@ -2,140 +2,131 @@
 
 using namespace std;
 
-class Vector2
+template <typename T>
+class Vector
 {
+private:
+	int size;
+	int capacity;
+	T * bufferptr;
+
 public:
-	int x;
-	int y;
-
-	Vector2(int x, int y)
+	Vector()
 	{
-		this->x = x;
-		this->y = y;
-	}
-	
-	// Vector2 Vector2::operator+(const Vector2& vector2)
-	Vector2 operator+(const Vector2 & vector2)
-	{
-		// 밑에 값과 같이 누적을 시키면 안된다.
-		// this->x += vector2.x;
-		// this->y += vector2.y;
-		Vector2 other
-		(
-			this->x + vector2.x,
-			this->y + vector2.y
-		);
-		return  other;
+		size = 0;
+		capacity = 0;
+		bufferptr = nullptr;
 	}
 
-	Vector2 operator-(const Vector2& vector2)
+	void PushBack(T data)
 	{
-		// 밑에 값과 같이 누적을 시키면 안된다.
-		// this->x += vector2.x;
-		// this->y += vector2.y;
-		Vector2 other
-		(
-			this->x - vector2.x,
-			this->y - vector2.y
-		);
-		return  other;
+		if (capacity == 0)
+		{
+			Resize(1);	
+		}
+		else if (capacity <= size)
+		{
+			Resize(capacity*2);
+		}
+
+		bufferptr[size++] = data;
 	}
 
-
-	Vector2 operator*(const Vector2& vector2)
+	void PopBack()
 	{
-		// 밑에 값과 같이 누적을 시키면 안된다.
-		// this->x += vector2.x;
-		// this->y += vector2.y;
-		Vector2 other
-		(
-			this->x * vector2.x,
-			this->y * vector2.y
-		);
-		return  other;
+		if (capacity <= 0)
+		{
+			cout << "Vector Is Empty~!" << endl;
+		}
+		else
+		{
+			bufferptr[--size] = 0;
+		}
+
 	}
 
-
-	Vector2 operator*(int value)
+	void Resize(int newSize)
 	{
-		Vector2 other
-		(
-			this->x * value,
-			this->y * value
-		);
+		// 1. Capacity에 새로운 size값을 설정합니다.
+		capacity = newSize;
 
-		return  other;
+		// 2. 새로운 포인터 변수를 생성해서 새롭게 만들어진 메모리 공간을 가리키게 합니다.
+		// -> 새로운 포인터가 힙에 기존 용량의 2배
+		// T * bufferptr = new buffer[capacity];
+		T * newptr = new T[capacity];
+		
+		// 3. 새로운 메모리 공간에 값을 초기화합니다.
+		for (int i = 0; i < capacity; i++)
+		{
+			newptr[i] = NULL;
+		}
+
+		// 4. 기존 배열에 있는 값을 복사해서 새로운 배열에 넣어줍니다.
+		for (int i = 0; i < size; i++)
+		{
+			newptr[i] = bufferptr[i];
+		}
+
+		// 5. bufferPointer가 가리키는 메모리 공간을 해제합니다.
+		if (bufferptr != nullptr)
+		{
+			// 배열[] 모양을 안해주면 0번째 인덱스만 삭제되고 나머지는 남아있게 된다. 
+			// 즉 메모리 누수가 생긴다.
+			delete[] bufferptr;	
+		}
+		
+		
+		// 6. bufferPointer에 새로운 메모리 공간을 할당합니다.		
+		bufferptr = newptr;
+		newptr = nullptr;
 	}
 
-
-	Vector2 operator/(const Vector2& vector2)
+	// Reserve : Capacity에 해당크기의 메모리를 생성한다.
+	// 예외처리 : newSize < capacity 일때는 반환해야한다.
+	void Reserve(int newSize)
 	{
-		// 밑에 값과 같이 누적을 시키면 안된다.
-		// this->x += vector2.x;
-		// this->y += vector2.y;
-		Vector2 other
-		(
-			this->x / vector2.x,
-			this->y / vector2.y
-		);
-		return  other;
+		if (newSize < capacity)
+		{
+			return;
+		}
+
+		Resize(newSize);
 	}
 
+	// 오버로딩
+	// cout << vector[0]; 으로 바로 호출할 수 있다. 
+	// &를 사용하여 index값에 대한 복사값을 따로 만들지 않고 리스트에 바로 접근할 수 있다.
+	T& operator [] (const int& index)
+	{
+		return bufferptr[index];
+	}
 
+	int& Size()
+	{
+		return size;
+	}
 
+	~Vector()
+	{
+		if (bufferptr != nullptr)
+		{
+			delete[] bufferptr;
+		}
+	}
 };
-
-// 이미 곱 연산이 있기때문에 Class안에 선언하면 중복되어 에러가 뜨게 된다.
-Vector2 operator*(int value, Vector2 vector2)
-{
-	return vector2 * value;
-}
 
 int main()
 {
-	Vector2 vector1(10, 20);
-	Vector2 vector2(5, 5);
-	
+	Vector<int> vector;
+	vector.PushBack(10);
+	vector.PushBack(20);
+	vector.PushBack(30);
 
-
-	Vector2 vector4 = vector1 + vector2;
-	Vector2 vector5 = vector1 - vector2;
-	Vector2 vector6 = vector1 * vector2;
-	Vector2 vector7 = vector1 / vector2;
-	Vector2 vector8 = vector1 * 8;
-	Vector2 vector9 = 10 * vector1;
-
-	// Vector2 operator+(const Vector2 & vector2) -> Vector
-	// Vector2 Vector2::operator+(const Vector2& vector2)
-	cout << "vector1 + vector2" << endl;
-	cout << "vector4의 x값" << vector4.x << endl;
-	cout << "vector4의 y값" << vector4.y << endl;
+	for (int i = 0; i < vector.Size(); i++)
+	{
+		cout << vector[i] << " ";
+	}
 	cout << endl;
-	
-	cout << "vector1 - vector2" << endl;
-	cout << "vector4의 x값" << vector5.x << endl;
-	cout << "vector4의 y값" << vector5.y << endl;
-	cout << endl;
-
-	cout << "vector1 * vector2" << endl;
-	cout << "vector6의 x값" << vector6.x << endl;
-	cout << "vector6의 y값" << vector6.y << endl;
-	cout << endl;
-
-	cout << "vector1 / vector2" << endl;
-	cout << "vector7의 x값" << vector7.x << endl;
-	cout << "vector7의 y값" << vector7.y << endl;
-	cout << endl;
-
-	cout << "vector1 / vector2" << endl;
-	cout << "vector8의 x값" << vector8.x << endl;
-	cout << "vector8의 y값" << vector8.y << endl;
-	cout << endl;
-
-
-	cout << "vector1 / vector2" << endl;
-	cout << "vector9의 x값" << vector9.x << endl;
-	cout << "vector9의 y값" << vector9.y << endl;
 	
 
 	return 0;

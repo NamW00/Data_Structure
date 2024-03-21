@@ -59,11 +59,7 @@ public:
 	{
 		if (IsFull())
 		{
-			arr[front % SIZE] = 0;
-			arr[++front % SIZE] = 0;
-
-			arr[++rear % SIZE] = data;
-
+			cout << "Circular Queue Is Full~!" << endl;
 		}
 		else
 		{
@@ -97,24 +93,18 @@ int main()
 	CircularQueue<char> CircularQueue;
 	CircularQueue.Push('A');
 	CircularQueue.Front();
-	// CircularQueue.Show();
-
 
 	CircularQueue.Push('B');
 	CircularQueue.Front();
-	// CircularQueue.Show();
 
 	CircularQueue.Push('C');
 	CircularQueue.Front();
-	// CircularQueue.Show();
 
 	CircularQueue.Push('D');
 	CircularQueue.Front();
-	// CircularQueue.Show();
 
 	CircularQueue.Push('E');
 	CircularQueue.Front();
-	// CircularQueue.Show();
 
 	return 0;
 }
