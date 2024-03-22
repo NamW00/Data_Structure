@@ -1,132 +1,208 @@
 ﻿#include <iostream>
+#include <string>
+#define SIZE 10
 
 using namespace std;
 
+
+
 template <typename T>
-class Vector
+class Stack
 {
 private:
+	int top;
 	int size;
-	int capacity;
-	T * bufferptr;
+	T buffer[SIZE] = { 0, };
 
 public:
-	Vector()
+	Stack()
 	{
 		size = 0;
-		capacity = 0;
-		bufferptr = nullptr;
+		top = -1;
 	}
 
-	void PushBack(T data)
+	bool Empty()
 	{
-		if (capacity == 0)
+		if (top <= -1)
 		{
-			Resize(1);	
-		}
-		else if (capacity <= size)
-		{
-			Resize(capacity*2);
-		}
-
-		bufferptr[size++] = data;
-	}
-
-	void PopBack()
-	{
-		if (capacity <= 0)
-		{
-			cout << "Vector Is Empty~!" << endl;
+			return true;
 		}
 		else
 		{
-			bufferptr[--size] = 0;
+			return false;
 		}
-
 	}
 
-	void Resize(int newSize)
+	bool IsFull()
 	{
-		// 1. Capacity에 새로운 size값을 설정합니다.
-		capacity = newSize;
-
-		// 2. 새로운 포인터 변수를 생성해서 새롭게 만들어진 메모리 공간을 가리키게 합니다.
-		// -> 새로운 포인터가 힙에 기존 용량의 2배
-		// T * bufferptr = new buffer[capacity];
-		T * newptr = new T[capacity];
-		
-		// 3. 새로운 메모리 공간에 값을 초기화합니다.
-		for (int i = 0; i < capacity; i++)
+		// top = SIZE - 1일 경우에도 Full인 상태이므로 해당된다.
+		if (SIZE - 1 <= top)
 		{
-			newptr[i] = NULL;
+			return true;
 		}
-
-		// 4. 기존 배열에 있는 값을 복사해서 새로운 배열에 넣어줍니다.
-		for (int i = 0; i < size; i++)
+		else
 		{
-			newptr[i] = bufferptr[i];
+			return false;
 		}
+	}
 
-		// 5. bufferPointer가 가리키는 메모리 공간을 해제합니다.
-		if (bufferptr != nullptr)
+	void Push(T data)
+	{
+		if (IsFull())
 		{
-			// 배열[] 모양을 안해주면 0번째 인덱스만 삭제되고 나머지는 남아있게 된다. 
-			// 즉 메모리 누수가 생긴다.
-			delete[] bufferptr;	
+			cout << "Stack Is Full~!" << endl;
+		}
+		else
+		{
+			buffer[++top] = data;
+			size++;
 		}
 		
-		
-		// 6. bufferPointer에 새로운 메모리 공간을 할당합니다.		
-		bufferptr = newptr;
-		newptr = nullptr;
 	}
 
-	// Reserve : Capacity에 해당크기의 메모리를 생성한다.
-	// 예외처리 : newSize < capacity 일때는 반환해야한다.
-	void Reserve(int newSize)
+	T Pop()
 	{
-		if (newSize < capacity)
+		if (Empty())
 		{
-			return;
+			cout << "Stack Is Empty~!" << endl;
 		}
-
-		Resize(newSize);
+		else
+		{
+			// top이 줄어들면 top위의 값들은 접근할 수 있는 방법이 없으므로
+			// Push할때마다 그 값들을 새로 입력해주면 되기 때문에 크게 상관이 없음
+			// 오히려 한문장으로 표현가능해서 연산속도가 차이나게 된다.
+			return buffer[top--];
+		}
+		// buffer[top--] = NULL;
+		// size--;
 	}
-
-	// 오버로딩
-	// cout << vector[0]; 으로 바로 호출할 수 있다. 
-	// &를 사용하여 index값에 대한 복사값을 따로 만들지 않고 리스트에 바로 접근할 수 있다.
-	T& operator [] (const int& index)
-	{
-		return bufferptr[index];
-	}
-
-	int& Size()
+	
+	int &Size()
 	{
 		return size;
 	}
 
-	~Vector()
+	T & Top()
 	{
-		if (bufferptr != nullptr)
-		{
-			delete[] bufferptr;
-		}
+		return buffer[top];
 	}
+
 };
+
+bool CheckBraket(string content)
+{
+	Stack<char> stack;
+
+	for (int i = 0; i < content.length(); i++)
+	{
+		char character = content[i];
+	
+		if (character == '(' || character == '{' || character == '[')
+		{
+			stack.Push(character);
+		}
+		else if(character == ')' || character == '}' || character == ']')
+		{
+			char alphabet = stack.Pop();
+	
+			if (alphabet == '(' && character != ')')
+			{
+				return false;
+			}
+	
+			if (alphabet == '{' && character != '}')
+			{
+				return false;
+			}
+	
+			if (alphabet == '[' && character != ']')
+			{
+				return false;
+			}
+	 }
+	}
+	if (stack.Empty())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	
+	
+	// if (content.length() % 2 == 1)
+	// {
+	// 	return false;
+	// }
+	// else
+	// {
+	// 	for (int i = 0; i < content.length()/2; i++)
+	// 	{
+	// 		char character = content[i];
+	// 
+	// 		switch (character)
+	// 		{
+	// 		case '(':
+	// 			stack.Push('(');
+	// 			break;
+	// 		case '{':
+	// 			stack.Push('{');
+	// 			break;
+	// 		case '[':
+	// 			stack.Push('[');
+	// 			break;
+	// 		default:
+	// 			return false;
+	// 			break;
+	// 		}
+	// 	}
+	// 	for (int i = content.length()/2; i < content.length(); i++)
+	// 	{
+	// 		char character = content[i];
+	// 
+	// 		
+	// 	}
+	// }
+
+		
+
+	// 열린 괄호(다 Push())와 닫힌 괄호(다 Pop())
+	// {A [ (i+1) ] = 0;}
+	// stack = { { , [ , ( };
+
+
+	// 실패 조건 1 -> 열린 괄호의 top이 입력된 닫힌 괄호와 매칭 되지 않을 때
+	// ( A + {B + 1] )
+
+	// 실패 조건 2 -> stack에 데이터가 남아 있을 때
+	// (A + B {C + 0} 
+
+
+}
 
 int main()
 {
-	Vector<int> vector;
-	vector.PushBack(10);
-	vector.PushBack(20);
-	vector.PushBack(30);
+	Stack<char> stack;
 
-	for (int i = 0; i < vector.Size(); i++)
-	{
-		cout << vector[i] << " ";
-	}
-	cout << endl;
+	// stack.Push(10);
+	// stack.Push(20);
+	// stack.Push(30);
+	// stack.Push(40);
+	// stack.Push(50);
+	// stack.Push(60);
+	// 
+	// while (stack.Empty() == false)
+	// {
+	// 	cout << "Stack의 Top : " << stack.Top() << endl;
+	// 
+	// 	stack.Pop();
+	// }
+
+	bool flag = CheckBraket("({[]})");
+	cout << flag << endl;
+
 	
 
 	return 0;
