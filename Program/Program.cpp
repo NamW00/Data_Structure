@@ -1,160 +1,158 @@
 ﻿#include <iostream>
 
+#define SIZE 8
+
 using namespace std;
 
-struct Node
+template <typename T>
+class Heap
 {
-	int data;
-	Node* left;
-	Node* right;
+private:
+	T buffer[SIZE];
+	int index;
+	int child;
+	int parent;
+
+public:
+	Heap()
+	{
+		for (int i = 0; i < SIZE; i++)
+		{
+			buffer[i] = NULL;
+		}
+
+		index = 0;
+	}
+
+	// while 문으로 search 하기 전에 
+	// child = index
+	// parent = index / 2 
+
+	// 부모 노드와 자식 노드를 서로 비교할 떄는
+	// child <- parent;
+	// parent <- child / 2;
+
+	void Insert(T data)
+	{
+		if (index >= SIZE - 1)
+		{
+			cout << "Heap Is Full~!" << endl;
+			return;
+		}
+
+		buffer[++index] = data;
+
+		child = index;
+		parent = index / 2;
+
+		while (child != 1) // && buffer[child] > buffer[parent]
+		{
+			// 자식 노드와 부모 노드의 데이터를 비교합니다.
+			if (buffer[parent] < buffer[child])
+			{
+				swap(buffer[parent], buffer[child]);
+			}
+			child = parent;
+			parent = child / 2;
+			// buffer[index] = data;
+			// child = index;
+			// parent = index / 2;
+			// while (child != 1 && buffer[child] > buffer[parent])
+			// {
+			// 	swap(buffer[child], buffer[parent])
+			// 		child /= 2;
+			// 	parent /= 2;
+			// }
+		}
+	}
+
+	T & Delete()
+	{
+		
+		
+		// 1. 힙이 비어있다고 한다면 프로그램을 종료합니다.
+		if (index <= 1)
+		{
+			cout << "Heap Is Empty~!" << endl;
+			exit(1);
+		}
+		
+		// 2. 임시 변수에 buffer[1]의 값을 보관합니다.
+		T result = buffer[1];
+
+		// 3. index로 가리키는 배열의 값을 첫 번째 원소에 넣어줍니다. 
+		buffer[1] = buffer[index];
+		
+		// 4. index로 가리키는 배열의 값을 초기화합니다.
+		buffer[index] = NULL;
+		
+		// 5. index의 값을 감소시킵니다.
+		index--;
+
+		parent = 1;
+		child = 2;
+
+		while (child <= index)
+		{
+			if (buffer[child] < buffer[child + 1])
+			{
+				child += 1;
+			}
+			
+			if (buffer[parent] < buffer[child])
+			{
+				swap(buffer[parent], buffer[child]);
+			}
+
+			parent = child;
+			child = parent * 2;
+		}
+	}
+
+	void Show()
+	{
+		for (T element : buffer)
+		{
+			cout << element << " ";
+		}
+		cout << endl;
+	}
+
 };
-
-int countnode = 0;
-int countleafnode = 0;
-
-Node* createNode(int data, Node* left, Node* right)
-{
-	// 1. 새로운 노드를 생성합니다.
-	Node* newNode = new Node;
-
-	// 2. 새로운 노드이 data값을 저장합니다.
-	newNode->data = data;
-
-	// 3. 새로운 노드의 left값을 저장합니다.
-	newNode->left = left;
-
-	// 4. 새로운 노드의 right값을 저장합니다.
-	newNode->right = right;
-
-	// 5. 새로운 노드의 주솟값을 반환합니다.
-	return newNode;
-}
-
-void Preorder(Node*root)
-{
-	if(root != nullptr)
-	{
-		cout << root->data << " ";
-		Preorder(root->left);
-		Preorder(root->right);
-	}
-}
-
-void Inorder(Node* root)
-{
-	if (root != nullptr)
-	{
-		Inorder(root->left);
-		cout << root->data << " ";
-		Inorder(root->right);
-	} 
-}
-
-void Postorder(Node* root)
-{
-	if (root != nullptr)
-	{
-		Postorder(root->left);
-		Postorder(root->right);
-		cout << root->data << " ";
-	}
-}
-
-//	Node* countNode(Node * node)
-//	{
-//		
-//		if (node == nullptr)
-//		{
-//			cout << "Tree Is Empty~!" << endl;
-//			return countnode;
-//		}
-//		else
-//		{
-//			return 1 + countNode(node->left) + countNode(node->right);
-//	
-//		}
-//	}
-//	
-//	Node* countLeaf(Node* node)
-//	{
-//		if (node == nullptr)
-//		{
-//			cout << "Tree Is Empty~!" << endl;
-//			return;
-//		}
-//		else if (node->left == nullptr && node->right == nullptr)
-//		{
-//			cout << "Tree has Root Node~!" << endl;
-//			return;
-//		}
-//		else
-//		{
-//			return countLeaf(node->left) + countLeaf(node->right);
-//		}
-//	}
 
 int main()
 {
-	Node* node7 = createNode(7, nullptr, nullptr);
-	Node* node6 = createNode(6, nullptr, nullptr);
-	Node* node5 = createNode(5, nullptr, nullptr);
-	Node* node4 = createNode(4, nullptr, nullptr);
-	Node* node3 = createNode(3, node6, node7);
-	Node* node2 = createNode(2, node4, node5);
-	Node* node1 = createNode(1, node2, node3);
-
-	cout << "전위 순회 결과 : ";
-	Preorder(node1);
-	cout << endl;
-
-	cout << "중위 순회 결과 : ";
-	Inorder(node1);
-	cout << endl;
-
-	cout << "후위 순회 결과 : ";
-	Postorder(node1);
-	cout << endl;
+	Heap<int> heap;
+	heap.Insert(1);
+	heap.Insert(2);
+	heap.Insert(3);
+	heap.Insert(4);
+	heap.Insert(5);
+	heap.Insert(6);
+	heap.Insert(7);
+	heap.Show();
 
 
-
+	for (int i = 0; i < SIZE; i++)
+	{
+		heap.Delete();
+		heap.Show();
+	}
 
 	return 0;
 }
 
-// Tree(트리)
-//		 (A)				-> level 0	/ height 3
-//	   (B)ㅗ(C)				-> level 1	/ height 2
-// (D)ㅗ(E) (F)ㅗ(G)			-> level 2	/ height 1
-// root : A
-// -> 최상위 노드를 의미합니다.
-// edge : A-B
-// -> 노드와 노드 사이를 연결하는 간선을 의미합니다.
-// parent : A, B, C
-// -> 자신보다 하위 노드를 가지고 있는 노드를 의미합니다.
-// leaf : D, E, F, G
-// -> 자식 노드를 가지지 않는 노드를 의미한다.
-// level : root로 부터 그 하위 단계를 측정하는 것입니다.
-// path : 노드와 노드 사이간에 나타나는 노드와 간선의 순서
-// degree : 해당 노드가 포함하는 자식 노드의 수
-// 시간 복잡도 : O(logN)의 복잡도가 소요되어 파일 분석 속도에 유리하다
+// 힙 -> 완전이진트리로 구성된다.
+//				(10)
+//			(6)		 (7)
+//
+//
 
-// 트리 순회
-// 전위 순회 ( 1 -> 2 -> 4 -> 5 -> 3 -> 6 -> 7 )
-// 1. Root Node를 방문
-// 2. 왼쪽 서브 트리를 전위 순회합니다.
-// 3. 오른쪽 서브 트리를 전위 순회합니다.
-
-// 중위 순회 ( 4 -> 2 -> 5 -> 1 -> 6 -> 3 -> 7 )
-// 1. 왼쪽 서브 트리를 중위 순회합니다.
-// 2. Root Node를 방문
-// 3. 오른쪽 서브 트리를 중위 순회합니다.
-
-// 후위 순회( 4 -> 5 -> 2 -> 6 -> 7 -> 3 -> 1 )
-// 1. 왼쪽 서브 트리를 후위 순회합니다.
-// 3. 오른쪽 서브 트리를 후위 순회합니다.
-// 2. Root Node를 방문
-
-
-// 완전 이진 트리 
-// 노드 수 : n개 -> edge 개수 : n - 1개
-// 높이 : h -> 노드 수 : h ~ 2^h - 1개
+// 최대 힙(Max Heap) : 가장 큰 값이 꼭대기에 있을때를 말한다.
+// key(부모노드의 값) > key(자식노드의 값) 구조로 되어있다.
+// 완전이진트리를 유지를 하면서 삽입과 삭제를 진행해야한다.
+// 최대 값을 뽑을때 유리한 트리다.
+// 힙에서 이루어지기 때문에 데이터 값을 최대한 빠르게 처리를 해야한다. -> 배열의 형태로 처리하게 된다.
+// 왼쪽 자식의 인덱스 : (부모노드의 인덱스) * 2
+// 오른쪽 자식의 인덱스 : (부모노드의 인덱스) * 2 + 1
+// 부모의 인덱스 : (자식노드의 인덱스) / 2
