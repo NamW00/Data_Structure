@@ -2,66 +2,114 @@
 
 using namespace std;
 
+template <typename T>
+class BinarySearchTree
+{
+private:
+	struct Node
+	{
+		T data;
+		Node* left;
+		Node* right;
+	};
+
+	Node* root;
+public:
+	BinarySearchTree()
+	{
+		root = nullptr;
+	}
+
+
+	Node* CreateNode(T data)
+	{
+		Node* newNode = new Node;
+
+		newNode->data = data;
+		newNode->left = nullptr;
+		newNode->right = nullptr;
+
+		return newNode;
+	}
+
+	void Insert(T data)
+	{
+		
+
+		if (root == nullptr)
+		{
+			root = CreateNode(data);
+			return;
+		}
+		else
+		{
+			Node* currentNode = root;
+			while (currentNode != nullptr)
+			{
+				if (currentNode->data == data) // 내가 삽입하고자 하는 값이 root값과 같다면
+				{
+					return;
+				}
+				else if (currentNode->data < data) // 내가 삽입하고자 하는 값이 root값 보다 작다면
+				{
+					if (currentNode->left == nullptr)
+					{
+						currentNode->left = CreateNode(data);
+						break;
+					}
+					else
+					{
+						currentNode = currentNode->left;
+					}
+				}
+				else // 내가 삽입하고자 하는 값이 root값 보다 크다면
+				{
+					if (currentNode->right == nullptr)
+					{
+						currentNode->right = CreateNode(data);
+						break;
+					}
+					else
+					{
+						currentNode = currentNode->right;
+					}
+				}
+				
+			}
+		}
+	}
+
+	void Find(T data)
+	{
+		Node* currentNode = CreateNode(data);
+
+	}
+
+	void delete(T data)
+	{
+		Node * deleteNode = CreateNode(data);
+
+	}
+
+
+	~BinarySearchTree()
+	{
+
+	}
+
+};
+
+
 int main()
 {
-#pragma region 그래프
-	// 그래프 : 요소들이 서로 복잡하게 연결되어 있는 관계를
-	//		    표현하는 자료구조이며, 정점과 간선들의 집합으로 구성되어 있습니다.
-	// Vertext(정점) ->	(0) - (2)
-	//  Edge (간선) ->	 |	   |
-	//					(1)	- (3)
+#pragma region 이진 탐색 트리
+	// 한 노드에 대해 왼쪽/오른쪽의 (최대) 두개의 자식을 가질수있는 트리이며,
+	// 왼쪽자식은 부모 노드보다 작은 값을, 오른쪽자식은 부모 노드보다 큰값을
+	// 가지는 탐색트리입니다.
+	// 완전 이진 트리일 필요는 없고 
 
-	// 정점(Vertext)
-	// 노드(Node) 데이터가 저장되는 그래프의 기본 원소입니다.
-
-	// 간선 (Edge)
-	// 노드들을 연결하는 선입니다.
-
-	// 인접 정점 (Adjacent Vertex)
-	// 간선으로 직접 연결된 정점을 의미합니다.
-
-	// 차수 (Degree)
-	// 정점에 연결된 간선의 수를 의미합니다.
-	// -> 진입차수 : 방향 그래프일때 특정 노드에 들어오는 노드 수를 가리킨다.
-	// -> 진출차수 : 방향 그래프에서 특정 노드가 가리키는 노드 수를 나타낸다. 
-	// Vertext ->	(0) → (2)			진입차수						진출차수
-	//  Edge ->		 ↑  ↘ ↓				Node 0 : 1개	, Node 1 : 1개	Node 0 : 2개	, Node 1 : 2개
-	//				(1)	↔ (3)			Node 2 : 0개	, Node 3 : 3개	Node 2 : 1개	, Node 3 : 1개
-
-	// 경로 (Path)
-	// 정점들을 연결하는 간선들의 순서입니다.
-
-	// 그래프의 종류
-
-	// 1. 무방향 그래프 (Undirected Graph)
-	// 간선에 방향이 없는 그래프입니다.
-	// Vertext ->	(0) - (2)
-	//  Edge ->		 |	   |
-	//				(1)	- (3)
-	// 2. 방향 그래프 (Directed Graph)
-	// 간선에 방향이 있는 그래프입니다.
-	// Vertext ->	(0) → (2)
-	//  Edge ->		 ↑  ↘ ↓
-	//				(1)	↔ (3)
-	// 3. 가중치 그래프 (Weighted Graph)
-	// 간선에 가중치가 있는 그래프입니다.
 
 #pragma endregion
-
-#pragma region 인접 행렬(Adjacency Materix)
-	// 인접 행렬(Adjacency Materix)
-	// 정점들 간의 연결 관계를 이차원 배열로 표현하는 방식입니다.
-	// 정점의 개수가 V 일 때, V X V 크기의 이차원 배열을 사용합니다.
-
-	// 장점
-	// 1. 두 정점이 연결되어 있는지 확인하기 쉽습니다.
-	// 2. 두 정점 사이의 간선의 가중치를 쉽게 확인할 수 있습니다.
-
-	// 단점
-	// 1. 정점의 개수가 많을 때 메모리 낭비가 심합니다.
-	// 2. 특정 정점과 연결된 정점을 찾을 때 시간이 오래 걸립니다.
-#pragma endregion
-
 
 	return 0;
 }
